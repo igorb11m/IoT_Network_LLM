@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.env
+.venv/
+venv/
+*.pcap
+*.pcapng
+*.csv
+*.pkl
+*.h5
+*.sav
