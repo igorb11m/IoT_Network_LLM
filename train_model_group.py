@@ -34,20 +34,20 @@ def get_category(label):
 
 
 def main():
-    print("1. Wczytywanie danych...")
+    print("1. Loading data")
     try:
         df = pd.read_csv(INPUT_FILE)
     except FileNotFoundError:
-        print(f"BŁĄD: Nie znaleziono {INPUT_FILE}.")
+        print(f"Error: Not found {INPUT_FILE}.")
         return
 
 
-    print("2. Grupowanie urządzeń w kategorie...")
+    print("2. Grouping into categories ...")
 
     df['Category'] = df['Label'].apply(get_category)
 
-    print(f"   Liczba próbek: {len(df)}")
-    print(f"   Znalezione kategorie: {df['Category'].unique()}")
+    print(f"   Sample size: {len(df)}")
+    print(f"   Found categories: {df['Category'].unique()}")
 
 
     X = df.drop(columns=['Label', 'Category'])
@@ -58,41 +58,40 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 
-    print("3. Trenowanie modelu na kategoriach...")
+    print("3. Training on categories ...")
     rf_model = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
     rf_model.fit(X_train, y_train)
 
 
-    print("4. Ewaluacja...")
+    print("4. Evaluating ...")
     y_pred = rf_model.predict(X_test)
 
     accuracy = accuracy_score(y_test, y_pred)
-    print(f"\n=== WYNIKI DLA KATEGORII ===")
-    print(f"Dokładność (Accuracy): {accuracy * 100:.2f}%")
-    print("\nRaport szczegółowy:")
+    print(f"\n=== SCORES FOR CATEGORY ===")
+    print(f" Accuracy: {accuracy * 100:.2f}%")
+    print("\Detailed raport:")
     print(classification_report(y_test, y_pred))
 
 
-    print(f"5. Generowanie wykresu {OUTPUT_IMAGE}...")
+    print(f"5. Generating plot {OUTPUT_IMAGE}...")
 
     cm = confusion_matrix(y_test, y_pred)
 
     labels = sorted(df['Category'].unique())
 
-    # Tutaj wystarczy mniejszy rozmiar, bo mamy mniej klas (np. 5 zamiast 31)
     plt.figure(figsize=(10, 8))
 
     sns.heatmap(cm, annot=True, fmt='d', cmap='Greens',
                 xticklabels=labels, yticklabels=labels,
-                annot_kws={"size": 12})  # Większa czcionka bo mniej kratek
+                annot_kws={"size": 12})
 
-    plt.title(f'Macierz Pomyłek - Kategorie (Accuracy: {accuracy * 100:.1f}%)', fontsize=14)
-    plt.ylabel('Prawdziwa Kategoria', fontsize=12)
-    plt.xlabel('Przewidziana Kategoria', fontsize=12)
+    plt.title(f'Error matrix - Categories (Accuracy: {accuracy * 100:.1f}%)', fontsize=14)
+    plt.ylabel('True Category', fontsize=12)
+    plt.xlabel('Predicted Category', fontsize=12)
 
     plt.tight_layout()
     plt.savefig(OUTPUT_IMAGE)
-    print(f"Sukces! Zapisano wykres grupowy jako {OUTPUT_IMAGE}")
+    print(f"Saved plot as {OUTPUT_IMAGE}")
 
 
 if __name__ == "__main__":

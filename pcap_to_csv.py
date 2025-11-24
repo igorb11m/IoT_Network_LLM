@@ -58,7 +58,7 @@ def extract_features_from_pcap(pcap_path, label):
 
 
     except Exception as e:
-        print(f"Błąd przy pliku {pcap_path}: {e}")
+        print(f"Error at file {pcap_path}: {e}")
 
     return features_list
 
@@ -68,16 +68,16 @@ def main():
 
 
     if not os.path.exists(INPUT_DIR):
-        print(f"Błąd: Nie znaleziono folderu {INPUT_DIR}")
+        print(f"Error: directory not found {INPUT_DIR}")
         return
 
-    print("Rozpoczynam przetwarzanie danych...")
+    print("Processing data ...")
 
     for device_name in os.listdir(INPUT_DIR):
         device_path = os.path.join(INPUT_DIR, device_name)
 
         if os.path.isdir(device_path):
-            print(f"Przetwarzanie urządzenia: {device_name}")
+            print(f"Processing device: {device_name}")
 
             for file in os.listdir(device_path):
                 if file.endswith(".pcap") or file.endswith(".pcapng"):
@@ -86,17 +86,17 @@ def main():
 
                     data = extract_features_from_pcap(file_path, label=device_name)
                     all_data.extend(data)
-                    print(f"  -> Przetworzono {file}: {len(data)} pakietów.")
+                    print(f"  -> Processed {file}: {len(data)} packets.")
 
 
     if all_data:
         df = pd.DataFrame(all_data)
         df.to_csv(OUTPUT_CSV, index=False)
-        print(f"\nSukces! Dane zapisano do pliku: {OUTPUT_CSV}")
-        print(f"Łączna liczba próbek: {len(df)}")
+        print(f"\Saved to file: {OUTPUT_CSV}")
+        print(f"Number of samples: {len(df)}")
         print(df.head())
     else:
-        print("Nie znaleziono danych do przetworzenia.")
+        print("Data for processing not found.")
 
 
 if __name__ == "__main__":
