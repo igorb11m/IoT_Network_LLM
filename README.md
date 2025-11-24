@@ -2,9 +2,6 @@
 IoT devices classification with ML based upon network traffic they produced
 
 Made by:
-
-Igor Baran
-
-Ernest Bytnar
-
+Igor Baran\
+Ernest Bytnar\
 Krzysztof Kołodziej
